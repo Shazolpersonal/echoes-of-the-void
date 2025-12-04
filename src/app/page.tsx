@@ -1,65 +1,93 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect } from 'react';
+import { useGameStore } from '@/store/game-store';
+import { SoundManager } from '@/lib/sound-manager';
+import {
+  RetroTerminal,
+  StatusBar,
+  NarrativeLog,
+  CommandInput,
+  GameOverScreen,
+} from '@/components';
+
+/**
+ * Main game page for Echoes of the Void.
+ * Assembles all game components within the RetroTerminal wrapper.
+ * 
+ * Requirements: 1.1, 2.1, 3.1, 3.3, 4.1, 5.4, 5.5
+ */
+export default function GamePage() {
+  const {
+    health,
+    inventory,
+    isGameOver,
+    isProcessing,
+    isTyping,
+    narrativeEntries,
+    initializeGame,
+    submitCommand,
+    setTypingComplete,
+    resetGame,
+  } = useGameStore();
+
+  // Initialize game and preload sounds on mount
+  useEffect(() => {
+    // Preload all sound assets
+    SoundManager.preloadAll();
+    
+    // Initialize the game (generates prologue)
+    initializeGame();
+  }, [initializeGame]);
+
+  // Handle command submission
+  const handleSubmit = (command: string) => {
+    submitCommand(command);
+  };
+
+  // Determine if input should be disabled
+  const isInputDisabled = isProcessing || isGameOver;
+
+  // Show loading state while generating prologue
+  const isLoading = narrativeEntries.length === 0 && isProcessing;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <RetroTerminal>
+      <div className="crt-game-layout">
+        {/* Status bar at the top */}
+        <StatusBar
+          health={health}
+          inventory={inventory}
+          isGameOver={isGameOver}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* Main narrative area */}
+        <div className="crt-main-area">
+          {isLoading ? (
+            <div className="crt-loading">
+              <span className="crt-loading-text">
+                Entering The Void<span className="crt-dots">...</span>
+              </span>
+            </div>
+          ) : (
+            <NarrativeLog
+              entries={narrativeEntries}
+              isTyping={isTyping}
+              onSkipTyping={setTypingComplete}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          )}
         </div>
-      </main>
-    </div>
+
+        {/* Command input at the bottom */}
+        <CommandInput
+          onSubmit={handleSubmit}
+          disabled={isInputDisabled}
+          placeholder="What do you do?"
+        />
+
+        {/* Game over overlay */}
+        {isGameOver && <GameOverScreen onRestart={resetGame} />}
+      </div>
+    </RetroTerminal>
   );
 }

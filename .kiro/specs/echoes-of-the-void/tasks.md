@@ -14,8 +14,8 @@
     - Add placeholder audio files: `wind.mp3`, `scream.mp3`, `drip.mp3`, `combat.mp3`
     - _Requirements: 6.3_
 
-- [ ] 2. Define Core Data Models and Schema
-  - [ ] 2.1 Create Zod schema for AI responses
+- [-] 2. Define Core Data Models and Schema
+  - [x] 2.1 Create Zod schema for AI responses
     - Create `src/lib/schema.ts` with StructuredResponseSchema
     - Define VisualCueEnum, SoundCueEnum, GameStateUpdateSchema
     - Export TypeScript types from schema
@@ -23,23 +23,23 @@
   - [ ]* 2.2 Write property test for schema validation
     - **Property 4: Schema validation ensures response structure**
     - **Validates: Requirements 4.3, 8.2**
-  - [ ] 2.3 Create game state types
+  - [x] 2.3 Create game state types
     - Create `src/types/game.ts` with GameState, ConversationTurn, NarrativeEntry interfaces
     - _Requirements: 4.1, 4.2, 5.1, 5.2, 5.3_
 
-- [ ] 3. Implement Utility Libraries
-  - [ ] 3.1 Create ASCII art library
+- [-] 3. Implement Utility Libraries
+  - [x] 3.1 Create ASCII art library
     - Create `src/lib/ascii.ts` with ASCII_ART record mapping VisualCue to art strings
     - Implement `getASCIIArt()` and `hasASCIIArt()` functions
     - _Requirements: 7.1_
   - [ ]* 3.2 Write property test for ASCII art mapping
     - **Property 11: Visual cue maps to correct ASCII art**
     - **Validates: Requirements 7.1**
-  - [ ] 3.3 Create system prompts library
+  - [x] 3.3 Create system prompts library
     - Create `src/lib/prompts.ts` with SYSTEM_PROMPT and INITIAL_PROMPT constants
     - Enforce dark 80s horror tone and character rules
     - _Requirements: 4.1, 4.2_
-  - [ ] 3.4 Create context builder
+  - [x] 3.4 Create context builder
     - Create `src/lib/context.ts` with `buildContext()` function
     - Include last 5 turns of history and current player state
     - _Requirements: 4.1, 4.2, 4.4_
@@ -49,7 +49,7 @@
   - [ ]* 3.6 Write property test for game state serialization round-trip
     - **Property 5: Game state serialization round-trip**
     - **Validates: Requirements 4.4, 4.5**
-  - [ ] 3.7 Create SoundManager utility
+  - [x] 3.7 Create SoundManager utility
     - Create `src/lib/sound-manager.ts` with preload, play, setVolume functions
     - Map SoundCue enum to audio file paths
     - _Requirements: 6.1, 6.2, 6.3_
@@ -57,15 +57,15 @@
     - **Property 10: Sound cue triggers correct audio**
     - **Validates: Requirements 6.1**
 
-- [ ] 4. Checkpoint
+- [x] 4. Checkpoint
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Implement Zustand Game Store
-  - [ ] 5.1 Create base game store
+- [x] 5. Implement Zustand Game Store
+  - [x] 5.1 Create base game store
     - Create `src/store/game-store.ts` with initial state (health: 100, inventory: [], history: [])
     - Implement `addNarrativeEntry`, `setTypingComplete` actions
     - _Requirements: 5.1, 5.2, 5.3, 5.5_
-  - [ ] 5.2 Implement state update logic
+  - [x] 5.2 Implement state update logic
     - Implement `applyStateUpdate()` action for health_change, inventory_add, inventory_remove
     - Clamp health between 0-100
     - Set isGameOver when health <= 0
@@ -76,26 +76,26 @@
     - **Property 8: Inventory remove excludes item**
     - **Property 9: Game over triggers at zero health**
     - **Validates: Requirements 5.1, 5.2, 5.3, 5.4**
-  - [ ] 5.4 Implement game reset logic
+  - [x] 5.4 Implement game reset logic
     - Implement `resetGame()` action to restore initial state
     - Clear history, narrativeEntries, reset health/inventory
     - _Requirements: 5.4_
-  - [ ] 5.5 Implement game initialization
+  - [x] 5.5 Implement game initialization
     - Implement `initializeGame()` action for first load
     - Send __START_GAME__ prompt to generate prologue
     - _Requirements: 3.3, 4.1_
 
-- [ ] 6. Implement AI Server Action
-  - [ ] 6.1 Create generateNarrative server action
+- [x] 6. Implement AI Server Action
+  - [x] 6.1 Create generateNarrative server action
     - Create `src/app/actions/generate-narrative.ts`
     - Use Vercel AI SDK `generateObject` with Google Gemini 1.5 Flash
     - Pass system prompt and built context
     - _Requirements: 8.1, 8.2, 4.3_
-  - [ ] 6.2 Implement error handling and fallback
+  - [x] 6.2 Implement error handling and fallback
     - Catch AI errors and return fallback narrative response
     - Log errors for debugging
     - _Requirements: 8.3_
-  - [ ] 6.3 Wire server action to game store
+  - [x] 6.3 Wire server action to game store
     - Implement `submitCommand()` action in store
     - Call server action, apply state updates, add narrative entries
     - Handle visual_cue and sound_cue responses
@@ -104,16 +104,16 @@
 - [ ] 7. Checkpoint
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Build Retro Terminal UI Components
-  - [ ] 8.1 Create RetroTerminal container component
+- [x] 8. Build Retro Terminal UI Components
+  - [x] 8.1 Create RetroTerminal container component
     - Create `src/components/RetroTerminal.tsx`
     - Apply CRT effects: scanlines, flicker, curvature, glow via CSS
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
-  - [ ] 8.2 Create CRT effects CSS
+  - [x] 8.2 Create CRT effects CSS
     - Create `src/styles/crt.css` with scanline overlay, flicker animation, curved screen styles
     - Apply phosphor glow text-shadow
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
-  - [ ] 8.3 Create CommandInput component
+  - [x] 8.3 Create CommandInput component
     - Create `src/components/CommandInput.tsx`
     - Auto-focus on mount and after submission
     - Clear input after submission, show processing indicator
@@ -121,7 +121,7 @@
   - [ ]* 8.4 Write property test for command input behavior
     - **Property 1: Command input clears after submission**
     - **Validates: Requirements 2.3**
-  - [ ] 8.5 Create NarrativeLog component
+  - [x] 8.5 Create NarrativeLog component
     - Create `src/components/NarrativeLog.tsx`
     - Render entries with typewriter effect
     - Auto-scroll to bottom, support click-to-skip
@@ -129,44 +129,44 @@
   - [ ]* 8.6 Write property test for narrative log ordering
     - **Property 2: Player commands appear immediately in log**
     - **Validates: Requirements 3.3**
-  - [ ] 8.7 Create StatusBar component
+  - [x] 8.7 Create StatusBar component
     - Create `src/components/StatusBar.tsx`
     - Display health bar and inventory list
     - _Requirements: 5.5_
-  - [ ] 8.8 Create ASCIIRenderer component
+  - [x] 8.8 Create ASCIIRenderer component
     - Create `src/components/ASCIIRenderer.tsx`
     - Render ASCII art with monospace formatting
     - _Requirements: 7.1, 7.3_
-  - [ ] 8.9 Create GameOverScreen component
+  - [x] 8.9 Create GameOverScreen component
     - Create `src/components/GameOverScreen.tsx`
     - Display GAME OVER message and restart prompt
     - Handle keypress to trigger resetGame
     - _Requirements: 5.4_
 
-- [ ] 9. Assemble Main Game Page
-  - [ ] 9.1 Create game page layout
+- [x] 9. Assemble Main Game Page
+  - [x] 9.1 Create game page layout
     - Create `src/app/page.tsx` with RetroTerminal wrapper
     - Compose StatusBar, NarrativeLog, CommandInput components
     - _Requirements: 1.1, 2.1, 3.1, 5.5_
-  - [ ] 9.2 Wire game initialization on mount
+  - [x] 9.2 Wire game initialization on mount
     - Call `initializeGame()` in useEffect on page load
     - Display loading state while generating prologue
     - _Requirements: 3.3, 4.1_
-  - [ ] 9.3 Handle game over state
+  - [x] 9.3 Handle game over state
     - Conditionally render GameOverScreen when isGameOver is true
     - Disable CommandInput during game over
     - _Requirements: 5.4_
 
-- [ ] 10. Polish and Integration
-  - [ ] 10.1 Integrate SoundManager with game flow
+- [x] 10. Polish and Integration
+  - [x] 10.1 Integrate SoundManager with game flow
     - Preload sounds on page mount
     - Trigger sounds based on sound_cue responses
     - _Requirements: 6.1, 6.2, 6.3_
-  - [ ] 10.2 Add typewriter animation utility
+  - [x] 10.2 Add typewriter animation utility
     - Create `src/lib/typewriter.ts` with character-by-character reveal logic
     - Support skip functionality
     - _Requirements: 3.1, 3.4_
-  - [ ] 10.3 Final styling polish
+  - [x] 10.3 Final styling polish
     - Adjust CRT effect intensity
     - Fine-tune color scheme (green/amber options)
     - Ensure responsive layout

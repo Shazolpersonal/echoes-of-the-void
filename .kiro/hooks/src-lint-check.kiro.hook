@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Lint on Source Changes",
+  "description": "Runs npm run lint whenever a file in the src/ directory is modified to catch any linting errors.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npm run lint"
+  }
+}

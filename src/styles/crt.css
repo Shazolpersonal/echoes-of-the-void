@@ -1,0 +1,742 @@
+/**
+ * CRT Effects CSS
+ * Creates authentic retro terminal visual effects including:
+ * - Scanline overlay
+ * - Flicker animation
+ * - Curved screen appearance
+ * - Phosphor glow text-shadow
+ * 
+ * Requirements: 1.1, 1.2, 1.3, 1.4, 1.5
+ */
+
+/* CSS Custom Properties for CRT theming */
+:root {
+  /* Green theme (default) */
+  --crt-green: #33ff33;
+  --crt-green-dim: #22aa22;
+  --crt-green-glow: rgba(51, 255, 51, 0.5);
+  
+  /* Amber theme */
+  --crt-amber: #ffb000;
+  --crt-amber-dim: #cc8800;
+  --crt-amber-glow: rgba(255, 176, 0, 0.5);
+  
+  /* Background colors */
+  --crt-bg: #0a0a0a;
+  --crt-bg-dark: #050505;
+  
+  /* Active theme (default: green) */
+  --crt-text: var(--crt-green);
+  --crt-text-dim: var(--crt-green-dim);
+  --crt-text-glow: var(--crt-green-glow);
+  
+  /* Effect intensity controls */
+  --crt-scanline-opacity: 0.12;
+  --crt-flicker-intensity: 0.03;
+  --crt-glow-intensity: 1;
+  --crt-curvature: 20px;
+}
+
+/* Amber color scheme variant */
+.crt-theme-amber {
+  --crt-text: var(--crt-amber);
+  --crt-text-dim: var(--crt-amber-dim);
+  --crt-text-glow: var(--crt-amber-glow);
+}
+
+/* Reduced motion preference - disable animations */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --crt-flicker-intensity: 0;
+  }
+  
+  .crt-flicker {
+    animation: none !important;
+  }
+  
+  .crt-cursor {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
+/* Main CRT container - fills viewport */
+.crt-container {
+  position: fixed;
+  inset: 0;
+  background: var(--crt-bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+/* CRT screen with curved edges and shadow */
+.crt-screen {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+  max-height: 800px;
+  background: var(--crt-bg);
+  border-radius: var(--crt-curvature);
+  box-shadow:
+    inset 0 0 100px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 0, 0, 0.5),
+    0 0 calc(60px * var(--crt-glow-intensity)) var(--crt-text-glow);
+  overflow: hidden;
+}
+
+/* Content area with phosphor glow on text */
+.crt-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding: 1.5rem;
+  color: var(--crt-text);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  line-height: 1.5;
+  text-shadow:
+    0 0 calc(5px * var(--crt-glow-intensity)) var(--crt-text),
+    0 0 calc(10px * var(--crt-glow-intensity)) var(--crt-text-glow),
+    0 0 calc(20px * var(--crt-glow-intensity)) var(--crt-text-glow);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--crt-text-dim) var(--crt-bg);
+}
+
+
+/* Custom scrollbar for webkit browsers */
+.crt-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.crt-content::-webkit-scrollbar-track {
+  background: var(--crt-bg);
+}
+
+.crt-content::-webkit-scrollbar-thumb {
+  background: var(--crt-text-dim);
+  border-radius: 4px;
+}
+
+/* Scanline overlay effect */
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, var(--crt-scanline-opacity)) 0px,
+    rgba(0, 0, 0, var(--crt-scanline-opacity)) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+/* Flicker animation overlay */
+.crt-flicker {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: transparent;
+  animation: crt-flicker 0.15s infinite;
+  opacity: var(--crt-flicker-intensity);
+}
+
+@keyframes crt-flicker {
+  0% {
+    opacity: 0.02;
+  }
+  5% {
+    opacity: 0.04;
+  }
+  10% {
+    opacity: 0.02;
+  }
+  15% {
+    opacity: 0.03;
+  }
+  20% {
+    opacity: 0.02;
+  }
+  25% {
+    opacity: 0.04;
+  }
+  30% {
+    opacity: 0.02;
+  }
+  35% {
+    opacity: 0.03;
+  }
+  40% {
+    opacity: 0.02;
+  }
+  45% {
+    opacity: 0.04;
+  }
+  50% {
+    opacity: 0.02;
+  }
+  55% {
+    opacity: 0.03;
+  }
+  60% {
+    opacity: 0.02;
+  }
+  65% {
+    opacity: 0.04;
+  }
+  70% {
+    opacity: 0.02;
+  }
+  75% {
+    opacity: 0.03;
+  }
+  80% {
+    opacity: 0.02;
+  }
+  85% {
+    opacity: 0.04;
+  }
+  90% {
+    opacity: 0.02;
+  }
+  95% {
+    opacity: 0.03;
+  }
+  100% {
+    opacity: 0.02;
+  }
+}
+
+/* Screen curvature effect using pseudo-element */
+.crt-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: var(--crt-curvature);
+  box-shadow:
+    inset 0 0 80px rgba(0, 0, 0, 0.4),
+    inset 0 0 150px rgba(0, 0, 0, 0.2);
+}
+
+/* Vignette effect for curved screen appearance */
+.crt-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: var(--crt-curvature);
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+/* Text styling classes */
+.crt-text-player {
+  color: var(--crt-text);
+  opacity: 0.9;
+}
+
+.crt-text-narrator {
+  color: var(--crt-text);
+}
+
+.crt-text-system {
+  color: var(--crt-text-dim);
+  font-style: italic;
+}
+
+.crt-text-ascii {
+  color: var(--crt-text);
+  white-space: pre;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Input styling */
+.crt-input {
+  background: transparent;
+  border: none;
+  color: var(--crt-text);
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  caret-color: var(--crt-text);
+  text-shadow: inherit;
+  width: 100%;
+}
+
+.crt-input::placeholder {
+  color: var(--crt-text-dim);
+  opacity: 0.5;
+}
+
+/* Blinking cursor effect */
+.crt-cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1.2em;
+  background: var(--crt-text);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Processing indicator */
+.crt-processing {
+  display: inline-block;
+  animation: processing-dots 1.5s infinite;
+}
+
+@keyframes processing-dots {
+  0% {
+    content: '.';
+  }
+  33% {
+    content: '..';
+  }
+  66% {
+    content: '...';
+  }
+}
+
+/* Health bar styling */
+.crt-health-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.crt-health-bar-track {
+  width: 100px;
+  height: 12px;
+  background: var(--crt-bg);
+  border: 1px solid var(--crt-text-dim);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.crt-health-bar-fill {
+  height: 100%;
+  background: var(--crt-text);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 5px var(--crt-text-glow);
+}
+
+.crt-health-bar-fill.critical {
+  background: #ff3333;
+  box-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+  animation: pulse-critical 1s infinite;
+}
+
+@keyframes pulse-critical {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Game over screen */
+.crt-game-over {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10;
+}
+
+.crt-game-over-text {
+  font-size: 3rem;
+  color: #ff3333;
+  text-shadow:
+    0 0 10px #ff3333,
+    0 0 20px rgba(255, 51, 51, 0.5),
+    0 0 40px rgba(255, 51, 51, 0.3);
+  animation: game-over-pulse 2s infinite;
+}
+
+@keyframes game-over-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+.crt-restart-prompt {
+  margin-top: 2rem;
+  color: var(--crt-text-dim);
+  animation: blink 1.5s step-end infinite;
+}
+
+/* Responsive adjustments - Tablet */
+@media (max-width: 1024px) {
+  :root {
+    --crt-curvature: 15px;
+  }
+  
+  .crt-screen {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  .crt-content {
+    font-size: 15px;
+  }
+}
+
+/* Responsive adjustments - Mobile */
+@media (max-width: 768px) {
+  :root {
+    --crt-curvature: 10px;
+    --crt-scanline-opacity: 0.08;
+    --crt-glow-intensity: 0.7;
+  }
+  
+  .crt-container {
+    padding: 0.25rem;
+  }
+
+  .crt-content {
+    padding: 0.75rem;
+    font-size: 14px;
+  }
+
+  .crt-game-over-text {
+    font-size: 2rem;
+  }
+  
+  .crt-status-bar {
+    gap: 1rem;
+    padding: 0.5rem;
+    font-size: 12px;
+  }
+  
+  .crt-health-bar-track {
+    width: 80px;
+    height: 10px;
+  }
+  
+  .crt-input-container {
+    padding: 0.75rem 0;
+  }
+}
+
+/* Responsive adjustments - Small Mobile */
+@media (max-width: 480px) {
+  :root {
+    --crt-curvature: 8px;
+  }
+  
+  .crt-container {
+    padding: 0;
+  }
+  
+  .crt-content {
+    padding: 0.5rem;
+    font-size: 13px;
+  }
+  
+  .crt-status-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .crt-ascii-content,
+  .crt-ascii-pre {
+    font-size: 8px;
+  }
+  
+  .crt-game-over-text {
+    font-size: 1.5rem;
+  }
+}
+
+
+/* Command input container */
+.crt-input-container {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--crt-text-dim);
+  margin-top: 1rem;
+}
+
+.crt-prompt {
+  color: var(--crt-text);
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.crt-processing-text {
+  color: var(--crt-text-dim);
+}
+
+.crt-dots {
+  display: inline-block;
+  animation: dots-animation 1.5s steps(4, end) infinite;
+  width: 1.5em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+@keyframes dots-animation {
+  0% {
+    width: 0;
+  }
+  25% {
+    width: 0.5em;
+  }
+  50% {
+    width: 1em;
+  }
+  75% {
+    width: 1.5em;
+  }
+  100% {
+    width: 0;
+  }
+}
+
+
+/* Narrative log container */
+.crt-narrative-log {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 1rem;
+  cursor: pointer;
+}
+
+.crt-narrative-entry {
+  margin-bottom: 1rem;
+  word-wrap: break-word;
+}
+
+.crt-player-prefix {
+  color: var(--crt-text-dim);
+}
+
+.crt-ascii-content {
+  display: block;
+  white-space: pre;
+  font-size: 12px;
+  line-height: 1.1;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+
+/* Status bar styling */
+.crt-status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--crt-text-dim);
+  margin-bottom: 1rem;
+  font-size: 14px;
+}
+
+.crt-status-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.crt-status-label {
+  color: var(--crt-text-dim);
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.crt-health-value {
+  color: var(--crt-text);
+  font-size: 12px;
+  min-width: 50px;
+}
+
+.crt-inventory-list {
+  color: var(--crt-text);
+}
+
+.crt-status-dead {
+  color: #ff3333;
+  text-shadow: 0 0 5px #ff3333;
+  animation: pulse-critical 1s infinite;
+}
+
+
+/* ASCII renderer styling */
+.crt-ascii-renderer {
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.crt-ascii-pre {
+  margin: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  line-height: 1.1;
+  white-space: pre;
+  color: var(--crt-text);
+  text-shadow:
+    0 0 5px var(--crt-text),
+    0 0 10px var(--crt-text-glow);
+}
+
+
+/* Game over content styling */
+.crt-game-over-content {
+  text-align: center;
+}
+
+.crt-game-over-ascii {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: #ff3333;
+  text-shadow:
+    0 0 10px #ff3333,
+    0 0 20px rgba(255, 51, 51, 0.5);
+  margin-bottom: 1rem;
+  white-space: pre;
+}
+
+@media (max-width: 768px) {
+  .crt-game-over-ascii {
+    font-size: 6px;
+  }
+}
+
+
+/* Game layout - main page structure */
+.crt-game-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.crt-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Loading state */
+.crt-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crt-loading-text {
+  color: var(--crt-text);
+  font-size: 1.2rem;
+  animation: loading-pulse 2s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --crt-text: #00ff00;
+    --crt-text-dim: #00cc00;
+    --crt-glow-intensity: 0.5;
+    --crt-scanline-opacity: 0.05;
+  }
+}
+
+/* Dark mode is default, but ensure consistency */
+@media (prefers-color-scheme: light) {
+  .crt-container {
+    /* Keep dark theme regardless of system preference for authentic CRT look */
+    background: var(--crt-bg-dark);
+  }
+}
+
+/* Focus visible styles for accessibility */
+.crt-input:focus-visible {
+  outline: 2px solid var(--crt-text);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for theme switching */
+.crt-content,
+.crt-screen {
+  transition: 
+    color 0.3s ease,
+    text-shadow 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Print styles - remove CRT effects */
+@media print {
+  .crt-container {
+    position: static;
+    background: white;
+  }
+  
+  .crt-screen {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 100%;
+    max-height: none;
+  }
+  
+  .crt-content {
+    color: black;
+    text-shadow: none;
+  }
+  
+  .crt-scanlines,
+  .crt-flicker {
+    display: none;
+  }
+}

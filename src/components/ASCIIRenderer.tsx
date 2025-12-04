@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { VisualCue } from '@/lib/schema';
 import { getASCIIArt, hasASCIIArt } from '@/lib/ascii';
 
@@ -8,6 +8,24 @@ interface ASCIIRendererProps {
   artKey: VisualCue;
   onComplete?: () => void;
   animate?: boolean;
+}
+
+/**
+ * Get contextual color class based on artKey
+ */
+function getColorClass(artKey: VisualCue): string {
+  switch (artKey) {
+    case 'monster':
+    case 'skeleton':
+      return 'ascii-danger';
+    case 'chest':
+      return 'ascii-loot';
+    case 'door':
+    case 'void':
+      return 'ascii-info';
+    default:
+      return '';
+  }
 }
 
 /**
@@ -21,6 +39,7 @@ export function ASCIIRenderer({
   onComplete, 
   animate = false 
 }: ASCIIRendererProps) {
+  const colorClass = useMemo(() => getColorClass(artKey), [artKey]);
   const [displayedArt, setDisplayedArt] = useState('');
   const [isComplete, setIsComplete] = useState(!animate);
 
@@ -58,7 +77,10 @@ export function ASCIIRenderer({
   }
 
   return (
-    <div className="crt-ascii-renderer" aria-label={`ASCII art: ${artKey}`}>
+    <div 
+      className={`crt-ascii-renderer ${colorClass}`.trim()} 
+      aria-label={`ASCII art: ${artKey}`}
+    >
       <pre className="crt-ascii-pre">
         {displayedArt}
         {!isComplete && <span className="crt-cursor" aria-hidden="true" />}

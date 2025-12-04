@@ -44,6 +44,29 @@
   --crt-text-glow: var(--crt-amber-glow);
 }
 
+/* Boot sequence styling */
+.crt-boot-sequence {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.crt-boot-line {
+  white-space: pre;
+  animation: boot-line-appear 0.1s ease-out;
+}
+
+@keyframes boot-line-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Reduced motion preference - disable animations */
 @media (prefers-reduced-motion: reduce) {
   :root {
@@ -618,6 +641,31 @@
     0 0 10px var(--crt-text-glow);
 }
 
+/* Contextual ASCII art color themes */
+.ascii-danger .crt-ascii-pre {
+  color: #ff0033;
+  text-shadow:
+    0 0 5px #ff0033,
+    0 0 10px rgba(255, 0, 51, 0.5),
+    0 0 20px rgba(255, 0, 51, 0.3);
+}
+
+.ascii-loot .crt-ascii-pre {
+  color: #ffd700;
+  text-shadow:
+    0 0 5px #ffd700,
+    0 0 10px rgba(255, 215, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.ascii-info .crt-ascii-pre {
+  color: #00ffff;
+  text-shadow:
+    0 0 5px #00ffff,
+    0 0 10px rgba(0, 255, 255, 0.5),
+    0 0 20px rgba(0, 255, 255, 0.3);
+}
+
 
 /* Game over content styling */
 .crt-game-over-content {
@@ -739,4 +787,95 @@
   .crt-flicker {
     display: none;
   }
+}
+
+/* System badge - 80s terminal watermark style */
+.system-badge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  color: var(--crt-text-dim);
+  text-shadow: none;
+  z-index: 50;
+  text-decoration: none;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0.05em;
+  transition: opacity 0.3s ease, text-shadow 0.3s ease;
+}
+
+.system-badge:hover {
+  opacity: 1;
+  text-shadow:
+    0 0 5px var(--crt-text),
+    0 0 10px var(--crt-text-glow);
+  color: var(--crt-text);
+}
+
+/* Mute toggle button - retro pixelated style */
+.mute-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  background: transparent;
+  border: 2px solid var(--crt-text-dim);
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--crt-text);
+  opacity: 0.6;
+  transition: opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mute-toggle:hover {
+  opacity: 1;
+  border-color: var(--crt-text);
+  box-shadow:
+    0 0 5px var(--crt-text-glow),
+    inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.mute-toggle:focus-visible {
+  outline: 2px solid var(--crt-text);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+.mute-toggle svg {
+  display: block;
+}
+
+/* Damage feedback effects */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+.damage-effect {
+  animation: shake 0.5s ease-in-out;
+}
+
+.damage-effect .crt-screen {
+  box-shadow:
+    inset 0 0 100px rgba(255, 0, 0, 0.3),
+    inset 0 0 50px rgba(255, 0, 0, 0.2),
+    0 0 20px rgba(0, 0, 0, 0.5),
+    0 0 60px var(--crt-text-glow);
+  border: 2px solid rgba(255, 51, 51, 0.6);
+}
+
+.damage-effect .crt-content {
+  background: rgba(255, 0, 0, 0.05);
 }

@@ -1,4 +1,5 @@
 import type { SoundCue } from './schema';
+import { useGameStore } from '@/store/game-store';
 
 /**
  * Maps SoundCue enum values to their corresponding audio file paths.
@@ -63,6 +64,7 @@ export const SoundManager = {
   /**
    * Plays the audio for a given sound cue.
    * Creates a new Audio instance to allow overlapping sounds.
+   * Respects the global mute state from the game store.
    * 
    * @param cue - The sound cue to play
    */
@@ -72,6 +74,9 @@ export const SoundManager = {
 
     // Don't play 'none' cue
     if (cue === 'none') return;
+
+    // Check if audio is muted
+    if (useGameStore.getState().isMuted) return;
 
     const path = SOUND_PATHS[cue];
     if (!path) return;

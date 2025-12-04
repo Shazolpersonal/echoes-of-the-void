@@ -16,7 +16,20 @@ const INITIAL_STATE = {
   isProcessing: false,
   isTyping: false,
   narrativeEntries: [] as NarrativeEntry[],
+  isMuted: false,
 };
+
+/**
+ * Static help message displayed when player types "help" or "instructions".
+ */
+const HELP_MESSAGE = `COMMAND LIST:
+- look: Inspect your surroundings
+- check inventory: See what you are carrying
+- take [item]: Pick up an object
+- use [item]: Use an item
+- north/south/east/west: Move directions
+
+*SURVIVAL TIP: Keep an eye on your health.*`;
 
 /**
  * Generates a unique ID for narrative entries.
@@ -31,6 +44,13 @@ function generateId(): string {
 export const useGameStore = create<GameState>((set, get) => ({
   // Initial state
   ...INITIAL_STATE,
+
+  /**
+   * Toggles the muted state for audio.
+   */
+  toggleMute: () => {
+    set((state) => ({ isMuted: !state.isMuted }));
+  },
 
   /**
    * Adds a new entry to the narrative log.
@@ -163,6 +183,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   /**
    * Submits a player command for processing.
    * Adds command to log, calls AI, and applies response.
+   * Handles static "help" and "instructions" commands locally.
    */
   submitCommand: async (command: string) => {
     const state = get();
@@ -177,6 +198,16 @@ export const useGameStore = create<GameState>((set, get) => ({
       type: 'player',
       content: command,
     });
+
+    // Check for static help command (case-insensitive)
+    const normalizedCommand = command.trim().toLowerCase();
+    if (normalizedCommand === 'help' || normalizedCommand === 'instructions') {
+      get().addNarrativeEntry({
+        type: 'system',
+        content: HELP_MESSAGE,
+      });
+      return;
+    }
 
     set({ isProcessing: true });
 

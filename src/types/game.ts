@@ -36,7 +36,11 @@ export interface GameState {
   isTyping: boolean;
   narrativeEntries: NarrativeEntry[];
 
+  // Audio State
+  isMuted: boolean;
+
   // Actions
+  toggleMute: () => void;
   submitCommand: (command: string) => Promise<void>;
   applyStateUpdate: (update: GameStateUpdate) => void;
   addNarrativeEntry: (entry: Omit<NarrativeEntry, 'id' | 'timestamp'>) => void;

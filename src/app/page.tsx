@@ -25,6 +25,7 @@ export default function GamePage() {
     isProcessing,
     isTyping,
     narrativeEntries,
+    textSpeed,
     initializeGame,
     submitCommand,
     setTypingComplete,
@@ -74,6 +75,7 @@ export default function GamePage() {
               entries={narrativeEntries}
               isTyping={isTyping}
               onSkipTyping={setTypingComplete}
+              textSpeed={textSpeed}
             />
           )}
         </div>

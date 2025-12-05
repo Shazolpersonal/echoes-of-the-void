@@ -1,13 +1,14 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
-import type { NarrativeEntry } from '@/types/game';
-import { createTypewriter, TYPEWRITER_SPEEDS, type TypewriterController } from '@/lib/typewriter';
+import type { NarrativeEntry, TextSpeed } from '@/types/game';
+import { createTypewriter, TYPEWRITER_SPEEDS, getAdjustedSpeed, type TypewriterController } from '@/lib/typewriter';
 
 interface NarrativeLogProps {
   entries: NarrativeEntry[];
   isTyping: boolean;
   onSkipTyping: () => void;
+  textSpeed: TextSpeed;
 }
 
 /**
@@ -16,7 +17,7 @@ interface NarrativeLogProps {
  * 
  * Requirements: 3.1, 3.2, 3.3, 3.4
  */
-export function NarrativeLog({ entries, isTyping, onSkipTyping }: NarrativeLogProps) {
+export function NarrativeLog({ entries, isTyping, onSkipTyping, textSpeed }: NarrativeLogProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const typewriterRef = useRef<TypewriterController | null>(null);
   const [displayedText, setDisplayedText] = useState<Map<string, string>>(new Map());
@@ -33,12 +34,22 @@ export function NarrativeLog({ entries, isTyping, onSkipTyping }: NarrativeLogPr
       return;
     }
 
-    const speed = lastNarratorEntry.type === 'ascii' 
+    const baseSpeed = lastNarratorEntry.type === 'ascii' 
       ? TYPEWRITER_SPEEDS.ascii 
       : TYPEWRITER_SPEEDS.narrative;
+    
+    const adjustedSpeed = getAdjustedSpeed(baseSpeed, textSpeed);
+
+    // Handle instant mode - skip typewriter entirely
+    if (adjustedSpeed === 0) {
+      setDisplayedText(prev => new Map(prev).set(lastNarratorEntry.id, lastNarratorEntry.content));
+      setCompletedEntries(prev => new Set(prev).add(lastNarratorEntry.id));
+      onSkipTyping();
+      return;
+    }
 
     const controller = createTypewriter(lastNarratorEntry.content, {
-      speed,
+      speed: adjustedSpeed,
       onUpdate: (text) => {
         setDisplayedText(prev => new Map(prev).set(lastNarratorEntry.id, text));
       },
@@ -55,7 +66,7 @@ export function NarrativeLog({ entries, isTyping, onSkipTyping }: NarrativeLogPr
       controller.stop();
       typewriterRef.current = null;
     };
-  }, [lastNarratorEntry, completedEntries, onSkipTyping]);
+  }, [lastNarratorEntry, completedEntries, onSkipTyping, textSpeed]);
 
 
   // Auto-scroll to bottom when new entries are added

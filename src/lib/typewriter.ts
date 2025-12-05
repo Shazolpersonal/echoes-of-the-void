@@ -157,6 +157,32 @@ export const TYPEWRITER_SPEEDS = {
 } as const;
 
 /**
+ * User-configurable text speed multipliers.
+ * Lower values = faster text.
+ */
+export const TEXT_SPEED_MULTIPLIERS = {
+  slow: 2.0,
+  normal: 1.0,
+  fast: 0.4,
+  instant: 0,
+} as const;
+
+export type TextSpeedKey = keyof typeof TEXT_SPEED_MULTIPLIERS;
+
+/**
+ * Gets the adjusted speed based on user preference.
+ * 
+ * @param baseSpeed - The base speed in ms per character
+ * @param userSpeed - The user's speed preference
+ * @returns Adjusted speed in ms per character (0 for instant)
+ */
+export function getAdjustedSpeed(baseSpeed: number, userSpeed: TextSpeedKey): number {
+  const multiplier = TEXT_SPEED_MULTIPLIERS[userSpeed];
+  if (multiplier === 0) return 0;
+  return Math.round(baseSpeed * multiplier);
+}
+
+/**
  * Calculates estimated duration for typewriter animation.
  * 
  * @param text - The text to animate

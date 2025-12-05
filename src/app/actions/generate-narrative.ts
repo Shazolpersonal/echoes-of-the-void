@@ -2,13 +2,13 @@
 
 import { generateObject } from 'ai';
 import { google } from '@ai-sdk/google';
-import type { ConversationTurn } from '@/types/game';
 import { StructuredResponseSchema, type StructuredResponse } from '@/lib/schema';
-import { SYSTEM_PROMPT, INITIAL_PROMPT } from '@/lib/prompts';
 import { buildContext } from '@/lib/context';
+import type { ConversationTurn } from '@/types/game';
+import { THEMES } from '@/lib/prompts';
 
 /**
- * Input for the generateNarrative server action.
+ * Input interface for the generateNarrative server action.
  */
 export interface GenerateNarrativeInput {
   command: string;
@@ -17,54 +17,70 @@ export interface GenerateNarrativeInput {
     health: number;
     inventory: string[];
   };
+  /** System prompt to use for the AI. Defaults to horror theme. */
+  systemPrompt?: string;
 }
 
 /**
- * Output from the generateNarrative server action.
+ * Output interface for the generateNarrative server action.
  */
 export interface GenerateNarrativeOutput {
   success: boolean;
   data?: StructuredResponse;
   error?: string;
+  errorType?: 'network' | 'validation' | 'rate_limit' | 'auth' | 'unknown';
 }
 
 /**
- * Fallback response when AI generation fails.
+ * Sanitizes error messages for client display.
+ * Removes sensitive information while keeping useful context.
  */
-const FALLBACK_RESPONSE: StructuredResponse = {
-  narrative: 'The void shifts around you, reality flickering for a moment. You sense something went wrong in the fabric of this place...',
-  visual_cue: 'none',
-  game_state_update: {},
-  sound_cue: 'wind',
-};
+function sanitizeErrorMessage(error: unknown): { message: string; type: GenerateNarrativeOutput['errorType'] } {
+  if (error instanceof Error) {
+    const msg = error.message.toLowerCase();
+    
+    if (msg.includes('api key') || msg.includes('unauthorized') || msg.includes('401')) {
+      return { message: 'Authentication failed with the void.', type: 'auth' };
+    }
+    if (msg.includes('rate limit') || msg.includes('429') || msg.includes('quota')) {
+      return { message: 'The void is overwhelmed. Please wait a moment.', type: 'rate_limit' };
+    }
+    if (msg.includes('timeout') || msg.includes('network') || msg.includes('fetch')) {
+      return { message: 'Connection to the void was lost.', type: 'network' };
+    }
+    if (msg.includes('parse') || msg.includes('json') || msg.includes('schema') || msg.includes('zod')) {
+      return { message: 'The void spoke in tongues we cannot understand.', type: 'validation' };
+    }
+  }
+  
+  return { message: 'An unknown disturbance ripples through the void.', type: 'unknown' };
+}
 
 /**
- * Server action to generate narrative responses from the AI Dungeon Master.
- * Uses Vercel AI SDK with Google Gemini 1.5 Flash.
+ * Server action that generates narrative responses from the AI Dungeon Master.
+ * Uses Google Gemini with structured output to ensure consistent response format.
  * 
- * @param input - The command, history, and player state
- * @returns The structured response from the AI
+ * @param input - The command, history, player state, and optional system prompt
+ * @returns The AI's structured response or an error
  */
 export async function generateNarrative(
   input: GenerateNarrativeInput
 ): Promise<GenerateNarrativeOutput> {
-  const isStartGame = input.command === '__START_GAME__';
-  
   try {
-    // Build the context from history and player state
+    // Use provided system prompt or default to horror theme
+    const systemPrompt = input.systemPrompt || THEMES.horror;
+    
+    // Build context from history and player state
     const context = buildContext(input.history, input.playerState);
     
-    // Build the prompt based on whether this is game start or regular command
-    const userPrompt = isStartGame
-      ? INITIAL_PROMPT
-      : `${context}\n\nPlayer: ${input.command}`;
+    // Construct the full prompt
+    const prompt = `${context}\n\nPlayer: ${input.command}`;
 
-    // Call Google Gemini with structured output
     const { object } = await generateObject({
       model: google('gemini-2.5-flash'),
       schema: StructuredResponseSchema,
-      system: SYSTEM_PROMPT,
-      prompt: userPrompt,
+      system: systemPrompt,
+      prompt,
     });
 
     return {
@@ -72,13 +88,14 @@ export async function generateNarrative(
       data: object,
     };
   } catch (error) {
-    // Log error for debugging
     console.error('AI generation failed:', error);
+
+    const { message, type } = sanitizeErrorMessage(error);
     
-    // Return fallback response to maintain game flow
     return {
-      success: true,
-      data: FALLBACK_RESPONSE,
+      success: false,
+      error: message,
+      errorType: type,
     };
   }
 }

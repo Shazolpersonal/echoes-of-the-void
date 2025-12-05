@@ -2,6 +2,15 @@
 
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useGameStore } from '@/store/game-store';
+import { THEME_CONFIG, type ThemeKey } from '@/lib/prompts';
+import type { TextSpeed } from '@/types/game';
+
+const TEXT_SPEED_OPTIONS: { value: TextSpeed; label: string }[] = [
+  { value: 'slow', label: 'SLOW' },
+  { value: 'normal', label: 'NORMAL' },
+  { value: 'fast', label: 'FAST' },
+  { value: 'instant', label: 'INSTANT' },
+];
 
 export type CRTTheme = 'green' | 'amber';
 
@@ -58,6 +67,34 @@ function SpeakerOffIcon() {
   );
 }
 
+/**
+ * Retro-styled gear/settings icon SVG.
+ */
+function GearIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      style={{ imageRendering: 'pixelated' }}
+    >
+      {/* Gear teeth */}
+      <rect x="7" y="1" width="2" height="2" />
+      <rect x="7" y="13" width="2" height="2" />
+      <rect x="1" y="7" width="2" height="2" />
+      <rect x="13" y="7" width="2" height="2" />
+      <rect x="3" y="3" width="2" height="2" />
+      <rect x="11" y="3" width="2" height="2" />
+      <rect x="3" y="11" width="2" height="2" />
+      <rect x="11" y="11" width="2" height="2" />
+      {/* Center circle */}
+      <rect x="5" y="5" width="6" height="6" />
+      <rect x="6" y="6" width="4" height="4" fill="black" />
+    </svg>
+  );
+}
+
 interface RetroTerminalProps {
   children: ReactNode;
   /** Color theme for the terminal. Defaults to 'green'. */
@@ -92,10 +129,15 @@ export function RetroTerminal({ children, theme = 'green' }: RetroTerminalProps)
   const health = useGameStore((state) => state.health);
   const isMuted = useGameStore((state) => state.isMuted);
   const toggleMute = useGameStore((state) => state.toggleMute);
+  const currentTheme = useGameStore((state) => state.currentTheme);
+  const setTheme = useGameStore((state) => state.setTheme);
+  const textSpeed = useGameStore((state) => state.textSpeed);
+  const setTextSpeed = useGameStore((state) => state.setTextSpeed);
   const previousHealthRef = useRef(health);
   const [isDamaged, setIsDamaged] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
   const [bootLines, setBootLines] = useState<string[]>([]);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Boot sequence effect
   useEffect(() => {
@@ -136,6 +178,14 @@ export function RetroTerminal({ children, theme = 'green' }: RetroTerminalProps)
     themeClass,
     isDamaged ? 'damage-effect' : '',
   ].filter(Boolean).join(' ');
+
+  const handleThemeChange = (newTheme: ThemeKey) => {
+    setTheme(newTheme);
+    setIsSettingsOpen(false);
+    // Trigger boot sequence for new theme
+    setIsBooting(true);
+    setBootLines([]);
+  };
   
   return (
     <div className={containerClasses}>
@@ -165,6 +215,15 @@ export function RetroTerminal({ children, theme = 'green' }: RetroTerminalProps)
         >
           POWERED BY KIRO IDE // KIROWEEN 2025
         </a>
+        {/* Settings button */}
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="settings-toggle"
+          aria-label="Open settings"
+          title="Reality Shifter"
+        >
+          <GearIcon />
+        </button>
         {/* Mute toggle button */}
         <button
           onClick={toggleMute}
@@ -174,6 +233,64 @@ export function RetroTerminal({ children, theme = 'green' }: RetroTerminalProps)
         >
           {isMuted ? <SpeakerOffIcon /> : <SpeakerOnIcon />}
         </button>
+        {/* Settings Modal - System BIOS style */}
+        {isSettingsOpen && (
+          <div className="bios-overlay" onClick={() => setIsSettingsOpen(false)}>
+            <div className="bios-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="bios-header">
+                ╔══════════════════════════════════════╗
+                <br />
+                ║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VOID SYSTEMS BIOS v6.66&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║
+                <br />
+                ║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;REALITY CONFIGURATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║
+                <br />
+                ╠══════════════════════════════════════╣
+              </div>
+              <div className="bios-content">
+                <div className="bios-label">SELECT PROTOCOL:</div>
+                {(Object.keys(THEME_CONFIG) as ThemeKey[]).map((themeKey) => (
+                  <button
+                    key={themeKey}
+                    onClick={() => handleThemeChange(themeKey)}
+                    className={`bios-button ${currentTheme === themeKey ? 'bios-button-active' : ''}`}
+                  >
+                    {currentTheme === themeKey ? '► ' : '  '}
+                    {THEME_CONFIG[themeKey].displayName}
+                    {currentTheme === themeKey ? ' ◄' : ''}
+                  </button>
+                ))}
+                
+                <div className="bios-label" style={{ marginTop: '1rem' }}>TEXT SPEED:</div>
+                <div className="bios-speed-row">
+                  {TEXT_SPEED_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setTextSpeed(option.value)}
+                      className={`bios-speed-button ${textSpeed === option.value ? 'bios-button-active' : ''}`}
+                    >
+                      {textSpeed === option.value ? `[${option.label}]` : option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="bios-footer">
+                ╠══════════════════════════════════════╣
+                <br />
+                ║&nbsp;&nbsp;WARNING: CHANGING PROTOCOL WILL&nbsp;&nbsp;&nbsp;║
+                <br />
+                ║&nbsp;&nbsp;RESET CURRENT REALITY INSTANCE&nbsp;&nbsp;&nbsp;║
+                <br />
+                ╚══════════════════════════════════════╝
+              </div>
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="bios-close"
+              >
+                [ESC] CLOSE
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

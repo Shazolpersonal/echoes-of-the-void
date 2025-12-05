@@ -1,4 +1,5 @@
 import type { GameStateUpdate } from '@/lib/schema';
+import type { ThemeKey } from '@/lib/prompts';
 
 /**
  * Represents a single turn in the conversation history between player and AI.
@@ -20,6 +21,11 @@ export interface NarrativeEntry {
 }
 
 /**
+ * Text speed settings for typewriter effect.
+ */
+export type TextSpeed = 'slow' | 'normal' | 'fast' | 'instant';
+
+/**
  * The complete game state managed by Zustand store.
  */
 export interface GameState {
@@ -35,9 +41,13 @@ export interface GameState {
   isProcessing: boolean;
   isTyping: boolean;
   narrativeEntries: NarrativeEntry[];
+  textSpeed: TextSpeed;
 
   // Audio State
   isMuted: boolean;
+
+  // Theme State
+  currentTheme: ThemeKey;
 
   // Actions
   toggleMute: () => void;
@@ -47,4 +57,6 @@ export interface GameState {
   setTypingComplete: () => void;
   resetGame: () => void;
   initializeGame: () => Promise<void>;
+  setTheme: (theme: ThemeKey) => void;
+  setTextSpeed: (speed: TextSpeed) => void;
 }

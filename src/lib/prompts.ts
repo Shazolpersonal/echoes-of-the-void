@@ -143,20 +143,44 @@ export const THEMES: Record<ThemeKey, string> = {
 };
 
 /**
- * Theme configuration with display names and opening lines.
+ * Theme configuration with display names, opening lines, and help messages.
  */
-export const THEME_CONFIG: Record<ThemeKey, { displayName: string; openingLine: string }> = {
+export const THEME_CONFIG: Record<ThemeKey, { displayName: string; openingLine: string; helpMessage: string }> = {
   horror: {
     displayName: 'PROTOCOL: HORROR',
     openingLine: 'The player has just awakened in The Void. Generate the opening scene that establishes: 1. The player waking in darkness 2. A sense of disorientation and dread 3. A hint of something watching 4. One possible direction or action to take. This is the START_GAME trigger. Set the tone for the entire experience.',
+    helpMessage: `COMMAND LIST:
+- look: Inspect your surroundings
+- check inventory: See what you are carrying
+- take [item]: Pick up an object
+- use [item]: Use an item
+- north/south/east/west: Move directions
+
+*SURVIVAL TIP: The Void drains your sanity. Stay alert.*`,
   },
   scifi: {
     displayName: 'PROTOCOL: SCI-FI',
     openingLine: 'The player has just regained consciousness on Station Erebus. Generate the opening scene that establishes: 1. The player waking in a damaged cryo-pod 2. Emergency lights flickering, alarms distant 3. A sense that something is very wrong 4. One possible direction or action to take. This is the START_GAME trigger. Set the tone for the entire experience.',
+    helpMessage: `COMMAND LIST:
+- scan: Analyze your surroundings
+- check inventory: Review equipment
+- take [item]: Acquire equipment
+- use [item]: Activate equipment
+- north/south/east/west: Navigate station
+
+*SURVIVAL TIP: Monitor oxygen levels. Conserve resources.*`,
   },
   fantasy: {
     displayName: 'PROTOCOL: FANTASY',
     openingLine: 'The player has just descended into The Abyssal Depths. Generate the opening scene that establishes: 1. The player at the entrance of an ancient dungeon 2. Torchlight revealing carved stone walls 3. A sense of ancient danger and hidden treasure 4. One possible direction or action to take. This is the START_GAME trigger. Set the tone for the entire experience.',
+    helpMessage: `COMMAND LIST:
+- look: Survey the chamber
+- check inventory: Examine your pack
+- take [item]: Claim treasure
+- use [item]: Wield an item
+- north/south/east/west: Explore passages
+
+*SURVIVAL TIP: Guard your vitality. Danger lurks in shadow.*`,
   },
 };
 

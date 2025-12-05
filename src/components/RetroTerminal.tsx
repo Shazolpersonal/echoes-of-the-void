@@ -238,13 +238,17 @@ export function RetroTerminal({ children, theme = 'green' }: RetroTerminalProps)
           <div className="bios-overlay" onClick={() => setIsSettingsOpen(false)}>
             <div className="bios-modal" onClick={(e) => e.stopPropagation()}>
               <div className="bios-header">
-                ╔══════════════════════════════════════╗
+                <span className="bios-border-desktop">╔══════════════════════════════════════╗</span>
                 <br />
-                ║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VOID SYSTEMS BIOS v6.66&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║
+                <span className="bios-border-desktop">║</span>
+                <span className="bios-title">VOID SYSTEMS BIOS v6.66</span>
+                <span className="bios-border-desktop">║</span>
                 <br />
-                ║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;REALITY CONFIGURATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║
+                <span className="bios-border-desktop">║</span>
+                <span className="bios-subtitle">REALITY CONFIGURATION</span>
+                <span className="bios-border-desktop">║</span>
                 <br />
-                ╠══════════════════════════════════════╣
+                <span className="bios-border-desktop">╠══════════════════════════════════════╣</span>
               </div>
               <div className="bios-content">
                 <div className="bios-label">SELECT PROTOCOL:</div>
@@ -274,13 +278,17 @@ export function RetroTerminal({ children, theme = 'green' }: RetroTerminalProps)
                 </div>
               </div>
               <div className="bios-footer">
-                ╠══════════════════════════════════════╣
+                <span className="bios-border-desktop">╠══════════════════════════════════════╣</span>
                 <br />
-                ║&nbsp;&nbsp;WARNING: CHANGING PROTOCOL WILL&nbsp;&nbsp;&nbsp;║
+                <span className="bios-border-desktop">║</span>
+                <span className="bios-warning">WARNING: PROTOCOL CHANGE</span>
+                <span className="bios-border-desktop">║</span>
                 <br />
-                ║&nbsp;&nbsp;RESET CURRENT REALITY INSTANCE&nbsp;&nbsp;&nbsp;║
+                <span className="bios-border-desktop">║</span>
+                <span className="bios-warning">RESETS REALITY INSTANCE</span>
+                <span className="bios-border-desktop">║</span>
                 <br />
-                ╚══════════════════════════════════════╝
+                <span className="bios-border-desktop">╚══════════════════════════════════════╝</span>
               </div>
               <button
                 onClick={() => setIsSettingsOpen(false)}

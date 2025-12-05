@@ -957,8 +957,19 @@
     inset 0 0 30px rgba(0, 0, 0, 0.5);
   animation: bios-appear 0.3s ease-out;
   max-width: 90%;
-  white-space: pre;
+  white-space: nowrap;
   line-height: 1.4;
+}
+
+/* BIOS header text elements */
+.bios-title,
+.bios-subtitle,
+.bios-warning {
+  padding: 0 1rem;
+}
+
+.bios-border-desktop {
+  /* Visible by default */
 }
 
 @keyframes bios-appear {
@@ -1127,23 +1138,62 @@
   }
 }
 
+/* Small mobile - hide ASCII borders, use CSS borders instead */
 @media (max-width: 480px) {
   .bios-modal {
-    font-size: 10px;
-    padding: 0.75rem;
+    font-size: 11px;
+    padding: 1rem;
+    white-space: normal;
+    text-align: center;
+    border: 3px solid var(--crt-text);
+    max-width: 95%;
+  }
+  
+  .bios-border-desktop {
+    display: none;
   }
   
   .bios-header {
-    font-size: 9px;
+    font-size: 11px;
+    border-bottom: 1px solid var(--crt-text-dim);
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .bios-title,
+  .bios-subtitle {
+    display: block;
+    padding: 0.25rem 0;
   }
   
   .bios-button {
-    font-size: 10px;
-    padding: 0.4rem 0.75rem;
+    font-size: 11px;
+    padding: 0.6rem 1rem;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
   }
   
   .bios-footer {
-    font-size: 9px;
+    font-size: 10px;
+    border-top: 1px solid var(--crt-text-dim);
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  
+  .bios-warning {
+    display: block;
+    padding: 0.15rem 0;
+  }
+  
+  .bios-speed-row {
+    justify-content: center;
+  }
+  
+  .bios-speed-button {
+    font-size: 10px;
+    padding: 0.4rem 0.5rem;
+    min-width: 55px;
   }
   
   .settings-toggle {

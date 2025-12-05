@@ -29,18 +29,6 @@ const INITIAL_STATE = {
 };
 
 /**
- * Static help message displayed when player types "help" or "instructions".
- */
-const HELP_MESSAGE = `COMMAND LIST:
-- look: Inspect your surroundings
-- check inventory: See what you are carrying
-- take [item]: Pick up an object
-- use [item]: Use an item
-- north/south/east/west: Move directions
-
-*SURVIVAL TIP: Keep an eye on your health.*`;
-
-/**
  * Generates a unique ID for narrative entries.
  */
 function generateId(): string {
@@ -289,9 +277,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Check for static help command (case-insensitive)
     const normalizedCommand = command.trim().toLowerCase();
     if (normalizedCommand === 'help' || normalizedCommand === 'instructions') {
+      const themeHelpMessage = THEME_CONFIG[state.currentTheme].helpMessage;
       get().addNarrativeEntry({
         type: 'system',
-        content: HELP_MESSAGE,
+        content: themeHelpMessage,
       });
       return;
     }
